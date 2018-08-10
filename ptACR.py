@@ -248,17 +248,17 @@ def check_interval(idx,trough_idx, min_itv):
 
 # find the potential breakpoints and perform permutation test on them, and obtain breakpoints with adjusted p-value
 def find_bk(start, end, win_size, site_snp_dict, pw_compat_dict, times=10000, empval=0.05, correction=True):	
-        win_size = int(win_size)
+	win_size = int(win_size)
 	all_comp_ratio = []
 	x_all = range(start,end)
-        for xx in x_all:
+	for xx in x_all:
 		if xx-win_size/2 >= 0 and xx+win_size/2 <= len(site_snp_dict):
                 	site_index_list = range(xx-win_size/2, xx+win_size/2)
                 	rr = compat_pattern_within(site_index_list, site_snp_dict, pw_compat_dict)
                 	all_comp_ratio.append(rr)
 
-        with open('all_comp_ratio_multi.json','w') as ff:
-                json.dump(all_comp_ratio,ff)
+	with open('all_comp_ratio_multi.json','w') as ff:
+		json.dump(all_comp_ratio,ff)
 
 	localmin = detect_troughs(all_comp_ratio, float(win_size))
 	#print len(localmin), 'local minima are found.'
@@ -267,18 +267,18 @@ def find_bk(start, end, win_size, site_snp_dict, pw_compat_dict, times=10000, em
 	if start < win_size/2:
 		start2 = win_size/2
         	valley_idx = [ll+win_size/2 for ll in localmin]
-        else:
+	else:
 		start2 = start
 		valley_idx = [ll+start2 for ll in localmin]
 	valley_val = [all_comp_ratio[ii] for ii in localmin]
 
-        valley_idx2, valley_val2 = [],[]
+	valley_idx2, valley_val2 = [],[]
 
-        acr_ratio_cutoff = np.mean(all_comp_ratio)-np.std(all_comp_ratio)
-        for ii, vv in enumerate(valley_val):
-                if vv < acr_ratio_cutoff:
-                        valley_idx2.append(valley_idx[ii])
-                        valley_val2.append(vv)
+	acr_ratio_cutoff = np.mean(all_comp_ratio)-np.std(all_comp_ratio)
+	for ii, vv in enumerate(valley_val):
+		if vv < acr_ratio_cutoff:
+			valley_idx2.append(valley_idx[ii])
+			valley_val2.append(vv)
 	if len(valley_idx2) > 0:
 		print
 		print len(valley_idx2), 'potential breakpoints are found.'
@@ -292,9 +292,9 @@ def find_bk(start, end, win_size, site_snp_dict, pw_compat_dict, times=10000, em
 	#run permutation
         valley_idx3, valley_val3 = [],[]
         between_p = []
-        for dd, site_index in enumerate(valley_idx2):
-                pval = between_permutation_dict(site_snp_dict, site_index, win_size, times, pw_compat_dict)
-                between_p.append(pval)
+	for dd, site_index in enumerate(valley_idx2):
+		pval = between_permutation_dict(site_snp_dict, site_index, win_size, times, pw_compat_dict)
+		between_p.append(pval)
 		if correction == False:
                 	if pval < empval:
                         	valley_idx3.append(site_index)
@@ -303,12 +303,12 @@ def find_bk(start, end, win_size, site_snp_dict, pw_compat_dict, times=10000, em
 	if correction == True:
 		empval_bonferroni = empval/float(len(between_p))
 		#corrected_p = bonferroni(between_p)
-                print 
+		print 
 		print 'Adjusted p-value cutoff:', empval_bonferroni
-                cnt_bks = 0
+		cnt_bks = 0
 		for dd, site_index in enumerate(valley_idx2):
 			if between_p[dd] < empval_bonferroni:
-                                cnt_bks += 1
+				cnt_bks += 1
 				if cnt_bks == 1:
 					print 'order', 'position', 'p-value'
 				valley_idx3.append(site_index)
@@ -327,15 +327,15 @@ def find_bk(start, end, win_size, site_snp_dict, pw_compat_dict, times=10000, em
 
 	#overall compatibility and regional compatibility
 	if start-win_size/2 <= 0:
-                start = 0
-        if end+win_size/2 >= len(site_snp_dict)-1:
-                end = len(site_snp_dict)
+		start = 0
+	if end+win_size/2 >= len(site_snp_dict)-1:
+		end = len(site_snp_dict)
 	print
-        print 'Overall compatibility', '[', start, ',', end, ']:', compat_pattern_within(range(start,end), site_snp_dict, pw_compat_dict)
-        valley_idx_all = [start] + valley_idx3 + [end]
+	print 'Overall compatibility', '[', start, ',', end, ']:', compat_pattern_within(range(start,end), site_snp_dict, pw_compat_dict)
+	valley_idx_all = [start] + valley_idx3 + [end]
 	for dd, xx in enumerate(valley_idx_all[:-1]):
 		site_index_list = range(xx, valley_idx_all[dd+1])
-                rr = compat_pattern_within(site_index_list, site_snp_dict, pw_compat_dict)
+		rr = compat_pattern_within(site_index_list, site_snp_dict, pw_compat_dict)
 		print dd+1, '[', xx, ',', valley_idx_all[dd+1]-1, ']:', rr
 
 	x_all2 = range(start2, start2+len(all_comp_ratio))
@@ -343,37 +343,37 @@ def find_bk(start, end, win_size, site_snp_dict, pw_compat_dict, times=10000, em
 
 
 def main():
-        #convert input file to dictionary
-        infile = sys.argv[1]
-        strain_id, strain_snp = parsing_input_SNP(infile)
-        site_snp_dict, site_dict_set = site_char(strain_snp)
+	#convert input file to dictionary
+	infile = sys.argv[1]
+	strain_id, strain_snp = parsing_input_SNP(infile)
+	site_snp_dict, site_dict_set = site_char(strain_snp)
 	print 'Number of strains:', len(strain_id)
 	print 'Number of sites:', len(site_snp_dict)
 
-        pw_compat_dict = pairwise_compat_dict(site_snp_dict,site_dict_set)
+	pw_compat_dict = pairwise_compat_dict(site_snp_dict,site_dict_set)
 	print 'Number of unique paired patterns:', len(pw_compat_dict)
 
-        start = int(sys.argv[2])
-        end = int(sys.argv[3])
-        print 'Starting position', start
+	start = int(sys.argv[2])
+	end = int(sys.argv[3])
+	print 'Starting position', start
 	print 'Ending position:', end
 	
 	# up to five sliding window size can be applied to the ptACR at a time
-        color = ['b','m','c','k','y']
-        _, ax = plt.subplots(1, 1, figsize=(8, 6))
-        for ii,ww in enumerate(sys.argv[4:]):
-                win_size = int(ww)
+	color = ['b','m','c','k','y']
+	_, ax = plt.subplots(1, 1, figsize=(8, 6))
+	for ii,ww in enumerate(sys.argv[4:]):
+		win_size = int(ww)
 		print 
 		print 'Sliding window size:', win_size
-                x_all, all_comp_ratio, valley_idx2, valley_val2, valley_idx3, valley_val3 = find_bk(start, end, win_size, site_snp_dict, pw_compat_dict, correction=True)
+		x_all, all_comp_ratio, valley_idx2, valley_val2, valley_idx3, valley_val3 = find_bk(start, end, win_size, site_snp_dict, pw_compat_dict, correction=True)
 		ax.plot(x_all, all_comp_ratio , color[ii], lw=1, label=str(win_size))
-                ax.plot(valley_idx2, valley_val2, '*', mfc=None, mec='r', mew=2, ms=8)
-                ax.plot(valley_idx3, valley_val3, '+', mfc=None, mec='g', mew=2, ms=8)
+		ax.plot(valley_idx2, valley_val2, '*', mfc=None, mec='r', mew=2, ms=8)
+		ax.plot(valley_idx3, valley_val3, '+', mfc=None, mec='g', mew=2, ms=8)
         
-        ax.set_ylabel('Average compatibility ratio', fontsize=14)
-        ax.set_xlabel('Position of site', fontsize=14)
-        ax.legend(bbox_to_anchor=(1.01, 1), loc=2, borderaxespad=0.)
-        plt.show()
+	ax.set_ylabel('Average compatibility ratio', fontsize=14)
+	ax.set_xlabel('Position of site', fontsize=14)
+	ax.legend(bbox_to_anchor=(1.01, 1), loc=2, borderaxespad=0.)
+	plt.show()
         
 if __name__ == '__main__':
         main()
