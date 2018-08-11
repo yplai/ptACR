@@ -21,24 +21,24 @@ from collections import defaultdict
 #    You should have received a copy of the GNU General Public License
 #    along with the ptACR. If not, see <http://www.gnu.org/licenses/>.
 
-#__author__ = "Yi-Pin Lai and Thomas R. Ioerger, https://github.com/yplai/ptACR"
-#__version__ = "1.0.0"
-#__license__ = "GNU"
+# __author__ = "Yi-Pin Lai and Thomas R. Ioerger, https://github.com/yplai/ptACR"
+# __version__ = "1.0.0"
+# __license__ = "GNU"
 
 
 # input format: similar to the fasta format, the number of taxa and the length of the alignment are shown in the first line, followed by lines where one line for each strain/isolate with its ID and DNA sequence
 def parsing_input_SNP(infile):
 	strain_id = []
-        strain_snp = []
-        strain_snp_dict = {}
+	strain_snp = []
+	strain_snp_dict = {}
         for ii, line in enumerate(open(infile)):
-                if '#' in line: continue
+		if '#' in line: continue
 		line = line.rstrip()
-                line = line.split()
+		line = line.split()
 		if ii is 0:
                         num_strain = line[0]
                         num_snp = line[1]
-                else:
+		else:
                         if '>' in line[0]:
                                 strain_id.append(line[0][1:])
                                 strain_snp_dict[line[0][1:]] = line[1]
@@ -68,17 +68,17 @@ def site_char(strain_snp):
         site_dict = {}
         site_dict_set = {}
         for ii in range(len(strain_snp[0])):
-                char = [cc[ii] for cc in strain_snp]
-                char1 = np.unique(char)
+		char = [cc[ii] for cc in strain_snp]
+		char1 = np.unique(char)
 		str_char = ''
 		char2 = list(char1)
 		for hh in char:
 			aa = char2.index(hh)
 			str_char += str(aa)
 		site_dict[ii] = str_char
-                idx1 = []
-                for uu in char1:
-                        idx1.append([pp for pp,cc in enumerate(char) if cc == uu])
+		idx1 = []
+		for uu in char1:
+			idx1.append([pp for pp,cc in enumerate(char) if cc == uu])
 		site_dict_set[str_char] = idx1
 	return site_dict, site_dict_set
 
