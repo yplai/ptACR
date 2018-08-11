@@ -31,7 +31,7 @@ def parsing_input_SNP(infile):
 	strain_id = []
 	strain_snp = []
 	strain_snp_dict = {}
-        for ii, line in enumerate(open(infile)):
+	for ii, line in enumerate(open(infile)):
 		if '#' in line: continue
 		line = line.rstrip()
 		line = line.split()
@@ -46,7 +46,7 @@ def parsing_input_SNP(infile):
                                 strain_id.append(line[0])
                                 strain_snp_dict[line[0]] = line[1]
                         strain_snp.append(line[1])
-        return strain_id, strain_snp
+	return strain_id, strain_snp
 
 
 # determine the compatibility for a pair of binary-state characters
@@ -122,20 +122,20 @@ def detect_cycle(u, visited, parent, graph):
 
 # dictionay of compatibility for pairs of unique patterns
 def pairwise_compat_dict(site_snp_dict, site_dict_set):
-        all_sites = [site_snp_dict[pp] for pp in range(len(site_snp_dict))]
-        unique_patterns = list(set(all_sites))
-        pw_compat = {}
-        for tt in unique_patterns:
-                for tt2 in unique_patterns:
+	all_sites = [site_snp_dict[pp] for pp in range(len(site_snp_dict))]
+	unique_patterns = list(set(all_sites))
+	pw_compat = {}
+	for tt in unique_patterns:
+		for tt2 in unique_patterns:
 			uu = list(site_dict_set[tt])
 			uu2 = list(site_dict_set[tt2])
-                        if compatible_multi(uu,uu2) == True:
-                                pw_compat[(tt,tt2)] = True
-                                pw_compat[(tt2,tt)] = True
-                        else:
-                                pw_compat[(tt,tt2)] = False
-                                pw_compat[(tt2,tt)] = False
-        return pw_compat
+			if compatible_multi(uu,uu2) == True:
+				pw_compat[(tt,tt2)] = True
+				pw_compat[(tt2,tt)] = True
+			else:
+				pw_compat[(tt,tt2)] = False
+				pw_compat[(tt2,tt)] = False
+	return pw_compat
 
 
 # calculate compatibility score of all paired patterns of one from upstream regions and the other from downstream regions for a given site with a given window size
